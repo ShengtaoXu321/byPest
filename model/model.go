@@ -2,19 +2,35 @@ package model
 
 // model里面是存放全局的结构体信息
 
-
-// 1. 定义一个结构体
+// 1. 定义硬件发送来数据的结构体
 type PestDate struct {
-	Data []InterData `json:"data" binding:"required"`      // 接口体的嵌套
-	TotalNums int  `json:"total_nums" binding:"required"`
+	Data      []InterData `json:"data" binding:"required"` // 接口体的嵌套
+	TotalNums int         `json:"total_nums" binding:"required"`
 }
 
 type InterData struct {
-	DevType int `json:"devType" binding:"required"`
-	Id 	int64	`json:"id" binding:"required"`
-	IdDev	string`json:"idDev" binding:"required"`
-	PestType int `json:"pestType" binding:"required"`
-	Time int64 `json:"time" binding:"required"`
+	DevType  int    `json:"devType" binding:"required"`
+	Id       int64  `json:"id" binding:"required"`
+	IdDev    string `json:"idDev" binding:"required"`
+	PestType int    `json:"pestType" binding:"required"`
+	Time     int64  `json:"time" binding:"required"`
 }
 
+// 2. 定义与网页传输数据的结构体
+// 历史数据结构体
+type HistoryData struct {
+	StartTime int64 `json:"startTime" binding:"required"`
+	EndTime   int64 `json:"endTime" binding:"required"`
+}
 
+// 最新数据结构体
+type LatestData struct {
+}
+
+// 常量错误码
+const (
+	SEARCH_ERR  = -2 // 数据库查询错误
+	MARSH_ERR   = -1 // 数据库返回的数据解析错误
+	SEARCH_NULL = 0  // 数据库没有符合的记录
+	SUCESS      = 1  // 数据成功
+)
