@@ -90,13 +90,25 @@ func handle3(c *gin.Context) {
 		})
 		return
 	}
+	var flag int = 0
+	for j := 0; j < len(rsp); j++ {
+		if rsp[j].Time == rsp[0].Time {
+			flag++
+			continue
+		} else {
+			flag = j
+			break
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"code": errCode,
-		"rsp":  rsp[0],
+		"rsp":  rsp[:flag],
 	})
 
 }
 
+// 解决跨域的CROS
 func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method
