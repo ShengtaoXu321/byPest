@@ -107,6 +107,7 @@ func Latest() (int, []model.InterData) {
 			res = append(res, CI)
 
 		}
+
 		if len(res) == 0 {
 			log.Println("查询到最新的数据为空！")
 			return model.SEARCH_NULL, res
