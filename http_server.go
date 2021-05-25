@@ -75,6 +75,7 @@ func handle2(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": errCode,
+		"len":  len(rsp),
 		"rsp":  RecData,
 	})
 }
@@ -90,6 +91,7 @@ func handle3(c *gin.Context) {
 		})
 		return
 	}
+	// 获取相同时间戳的最新数据
 	var flag int = 0
 	for j := 0; j < len(rsp); j++ {
 		if rsp[j].Time == rsp[0].Time {
@@ -103,6 +105,7 @@ func handle3(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": errCode,
+		"len":  flag,
 		"rsp":  rsp[:flag],
 	})
 
