@@ -1,14 +1,19 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"log"
 	"main.go/model"
 	"net/http"
 	"strings"
+	"time"
 )
 
+// 给硬件和前端提供接口
 func RouterInit() {
 	// 路由监听，给硬件的
 	r := gin.Default()
@@ -24,6 +29,52 @@ func RouterInit() {
 
 }
 
+// 访问计算器接口获取虫害数据
+func GetGermsInit() {
+	// 获取加密的token
+	s1, t1 := GenerateToken()
+	url1 := "https://open-gate.daqiuyin.com/v1"
+	body := model.GetGerms{ // 实例化一个请求体
+		Method: "GET",
+		Path:   "/sc-v2/calculator/60ae5a0dffaf33c74592d6c8",
+		Data:   nil,
+	}
+
+	//头部信息的封装
+	buf := bytes.NewBuffer(nil)
+	encoder := json.NewEncoder(buf)
+	if err := encoder.Encode(body); err != nil {
+		log.Println("头部信息编码失败！", err)
+	}
+
+	request, err := http.NewRequest(http.MethodPost, url1, buf)
+	if err != nil {
+		log.Println("头部加载绑定失败！", err)
+	}
+	request.Header.Add("Content-Type", "application/json")
+	request.Header.Add("X-DAQIUYIN-ID", "5f45d17204da596300000002")
+	request.Header.Add("X-DAQIUYIN-SIGN", s1)
+	request.Header.Add("X-DAQIUYIN-DATE", t1)
+
+	// 超时
+	var client = http.Client{
+		Timeout: 20 * time.Second,
+	}
+	response, err1 := client.Do(request)
+	if err1 != nil {
+		log.Println("发送POST请求失败！", err)
+	}
+
+	defer response.Body.Close()
+	fmt.Println("开始接收数据")
+	newBody, _ := ioutil.ReadAll(response.Body)
+	fmt.Println(string(newBody))
+
+	// 对获取的数据进行解析
+
+}
+
+// 对硬件发送的请求进行判断匹配
 func handle1(c *gin.Context) {
 	{
 		// 1. 将获取到的数据进行校验
@@ -43,6 +94,7 @@ func handle1(c *gin.Context) {
 	}
 }
 
+// 对接收到的网页请求数据进行解析
 func handle2(c *gin.Context) {
 	// 1. 将获取到的数据进行校验
 	var HistData model.HistoryData
@@ -80,6 +132,7 @@ func handle2(c *gin.Context) {
 	})
 }
 
+// 对网页请求的最新数据进行解析判断
 func handle3(c *gin.Context) {
 	// 执行数据库操作函数Latest()
 	errCode, rsp := Latest()

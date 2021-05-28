@@ -23,6 +23,13 @@ type HistoryData struct {
 	EndTime   int64 `json:"endTime" binding:"required"`
 }
 
+// 3. 定义获取霉变数据的请求头数据
+type GetGerms struct {
+	Method string      `json:"method"`
+	Path   string      `json:"path"`
+	Data   interface{} `json:"data"`
+}
+
 // 最新数据结构体
 type LatestData struct {
 }
