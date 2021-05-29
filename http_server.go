@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"log"
 	"main.go/model"
@@ -31,46 +32,72 @@ func RouterInit() {
 
 // 访问计算器接口获取虫害数据
 func GetGermsInit() {
-	// 获取加密的token
-	s1, t1 := GenerateToken()
-	url1 := "https://open-gate.daqiuyin.com/v1"
-	body := model.GetGerms{ // 实例化一个请求体
-		Method: "GET",
-		Path:   "/sc-v2/calculator/60ae5a0dffaf33c74592d6c8",
-		Data:   nil,
-	}
+	for true {
+		// 获取加密的token
+		s1, t1 := GenerateToken()
+		url1 := "https://open-gate.daqiuyin.com/v1"
+		body := model.GetGerms{ // 实例化一个请求体
+			Method: "GET",
+			Path:   "/sc-v2/calculator/60ae5a0dffaf33c74592d6c8",
+			Data:   nil,
+		}
 
-	//头部信息的封装
-	buf := bytes.NewBuffer(nil)
-	encoder := json.NewEncoder(buf)
-	if err := encoder.Encode(body); err != nil {
-		log.Println("头部信息编码失败！", err)
-	}
+		//头部信息的封装
+		buf := bytes.NewBuffer(nil)
+		encoder := json.NewEncoder(buf)
+		if err := encoder.Encode(body); err != nil {
+			log.Println("头部信息编码失败！", err)
+		}
 
-	request, err := http.NewRequest(http.MethodPost, url1, buf)
-	if err != nil {
-		log.Println("头部加载绑定失败！", err)
-	}
-	request.Header.Add("Content-Type", "application/json")
-	request.Header.Add("X-DAQIUYIN-ID", "5f45d17204da596300000002")
-	request.Header.Add("X-DAQIUYIN-SIGN", s1)
-	request.Header.Add("X-DAQIUYIN-DATE", t1)
+		request, err := http.NewRequest(http.MethodPost, url1, buf)
+		if err != nil {
+			log.Println("头部加载绑定失败！", err)
+		}
+		request.Header.Add("Content-Type", "application/json")
+		request.Header.Add("X-DAQIUYIN-ID", "5f45d17204da596300000002")
+		request.Header.Add("X-DAQIUYIN-SIGN", s1)
+		request.Header.Add("X-DAQIUYIN-DATE", t1)
 
-	// 超时
-	var client = http.Client{
-		Timeout: 20 * time.Second,
-	}
-	response, err1 := client.Do(request)
-	if err1 != nil {
-		log.Println("发送POST请求失败！", err)
-	}
+		// 超时
+		var client = http.Client{
+			Timeout: 20 * time.Second,
+		}
+		response, err1 := client.Do(request)
+		if err1 != nil {
+			log.Println("发送POST请求失败！", err)
+		}
 
-	defer response.Body.Close()
-	fmt.Println("开始接收数据")
-	newBody, _ := ioutil.ReadAll(response.Body)
-	fmt.Println(string(newBody))
+		defer response.Body.Close()
+		//fmt.Println("开始接收数据")
+		newBody, _ := ioutil.ReadAll(response.Body)
+		str := string(newBody)
+		//fmt.Println(string(newBody))
 
-	// 对获取的数据进行解析
+		// 对获取的数据进行解析 -- 使用gjson
+		var GermsMap model.ParsingGerms
+		data1 := gjson.Get(str, "data").String()
+		//fmt.Println(data1)
+		data2 := gjson.Get(data1, "algorithm").String()
+		data3 := gjson.Get(data2, "calculated").String()
+		gemData := gjson.Get(data3, "germs").Int()
+		senData := gjson.Get(data2, "sensor_data").String()
+		ymd := gjson.Get(senData, "ymd").String()
+		T := gjson.Get(senData, "T").Int()
+		DC := gjson.Get(senData, "DC").Float()
+
+		// 将解析后的数据存入结构体
+		GermsMap.Germs = gemData
+		GermsMap.Ymd = ymd
+		GermsMap.T = T
+		GermsMap.Dc = DC
+		fmt.Println("拿到的数据信息")
+		fmt.Println(GermsMap)
+
+		InsertGerms(GermsMap)
+
+		// 睡眠
+		time.Sleep(24 * time.Hour)
+	}
 
 }
 

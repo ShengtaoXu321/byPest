@@ -30,8 +30,12 @@ type GetGerms struct {
 	Data   interface{} `json:"data"`
 }
 
-// 最新数据结构体
-type LatestData struct {
+// 4. 定义霉变解析后需要的数据
+type ParsingGerms struct {
+	Germs int64   `bson:"germs"`
+	Ymd   string  `bson:"Ymd"`
+	T     int64   `bson:"T"`
+	Dc    float64 `bson:"DC"`
 }
 
 // 常量错误码

@@ -11,6 +11,7 @@ import (
 )
 
 var db_name *mongo.Collection
+var db_name1 *mongo.Collection
 
 func MongoInit() {
 	// 配置连接
@@ -25,9 +26,10 @@ func MongoInit() {
 	fmt.Println("mongo数据库连接成功！")
 	db := client.Database("ByPest")
 	db_name = db.Collection("Pest")
-
+	db_name1 = db.Collection("Germs")
 }
 
+// 硬件数据插入数据库Pest集合
 func Insert(buf model.PestDate) {
 	data := buf.Data
 	l := len(data)
@@ -46,6 +48,19 @@ func Insert(buf model.PestDate) {
 	}
 }
 
+// 霉变数据插入Germs集合
+func InsertGerms(buf model.ParsingGerms) {
+	fmt.Println("霉变数据开始插入数据库")
+
+	iResult, err := db_name1.InsertOne(context.TODO(), buf)
+	if err != nil {
+		log.Println("数据插入失败！", err)
+	}
+	fmt.Println("霉变数据插入成功！", iResult.InsertedID)
+
+}
+
+// 网页请求的历史数据查询
 func History(HistData model.HistoryData) (int, []model.InterData) {
 	var res []model.InterData
 	//res := []model.InterData{}
@@ -83,6 +98,7 @@ func History(HistData model.HistoryData) (int, []model.InterData) {
 
 }
 
+// 网页请求的最新数据查询
 func Latest() (int, []model.InterData) {
 	var res []model.InterData
 	//res := []model.InterData{}

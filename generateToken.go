@@ -4,7 +4,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -19,6 +18,6 @@ func GenerateToken() (s string, t string) {
 	hmac := hmac.New(sha256.New, []byte(key))
 	hmac.Write([]byte(path))
 	s = base64.StdEncoding.EncodeToString(hmac.Sum(nil))
-	fmt.Println(base64.StdEncoding.EncodeToString(hmac.Sum(nil)))
+	//fmt.Println(base64.StdEncoding.EncodeToString(hmac.Sum(nil)))
 	return s, t
 }

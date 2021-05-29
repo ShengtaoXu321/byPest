@@ -4,8 +4,8 @@ package main
 //以MQTT的形式传输至云平台架构的下一步---APLUS_MQ
 
 func main() {
-	// 初始化Mongo数据库
-	//MongoInit()
+	//初始化Mongo数据库
+	MongoInit()
 	//// 打开路由监听
 	//RouterInit()
 
