@@ -32,10 +32,11 @@ type GetGerms struct {
 
 // 4. 定义霉变解析后需要的数据
 type ParsingGerms struct {
-	Germs int64   `bson:"germs"`
-	Ymd   string  `bson:"Ymd"`
-	T     int64   `bson:"T"`
-	Dc    float64 `bson:"DC"`
+	Germs   int64   `bson:"germs" json:"germs"`
+	Ymd     string  `bson:"Ymd" json:"Ymd"`
+	T       int64   `bson:"T" json:"T"`
+	Dc      float64 `bson:"DC" json:"DC"`
+	InsTime int64   `bson:"InsTime" json:"InsTime"`
 }
 
 // 常量错误码

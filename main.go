@@ -7,9 +7,10 @@ func main() {
 	//初始化Mongo数据库
 	MongoInit()
 	//// 打开路由监听
-	//RouterInit()
+	go RouterInit()
 
 	// 获取计算器详情数据
 	GetGermsInit()
 
+	select {}
 }

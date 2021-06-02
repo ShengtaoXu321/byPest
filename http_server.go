@@ -24,6 +24,8 @@ func RouterInit() {
 	// 网页查询的路由--Post
 	r.POST("/history", handle2)
 	r.POST("/latest", handle3)
+	r.POST("/germs", handle4)
+
 	//r.GET("/latest", handle3)
 
 	r.Run(":18088")
@@ -33,6 +35,7 @@ func RouterInit() {
 // 访问计算器接口获取虫害数据
 func GetGermsInit() {
 	for true {
+		fmt.Println("------")
 		// 获取加密的token
 		s1, t1 := GenerateToken()
 		url1 := "https://open-gate.daqiuyin.com/v1"
@@ -65,6 +68,7 @@ func GetGermsInit() {
 		response, err1 := client.Do(request)
 		if err1 != nil {
 			log.Println("发送POST请求失败！", err)
+			return
 		}
 
 		defer response.Body.Close()
@@ -114,11 +118,14 @@ func handle1(c *gin.Context) {
 		}
 		log.Println("硬件上传数据格式正确")
 		c.JSON(http.StatusOK, "硬件上传数据格式正确")
-		//fmt.Println(recData)
 
-		Insert(recData)
+		fmt.Println("接收到的数据是", recData)
+
+		//Insert(recData)
 		c.JSON(http.StatusOK, "访问接口成功")
+
 	}
+
 }
 
 // 对接收到的网页请求数据进行解析
@@ -131,7 +138,7 @@ func handle2(c *gin.Context) {
 		c.JSON(http.StatusOK, "网页请求历史数据格式有误！")
 		return // 如果忽略return也可以，因为：用户的一次请求只能拥有一次响应
 	}
-	log.Println("网页请求历史数据格式正确...")
+	log.Println("网页请求虫害历史数据格式正确...")
 
 	//fmt.Println(recData)
 	// 执行数据库操作函数History()
@@ -189,6 +196,35 @@ func handle3(c *gin.Context) {
 		"rsp":  rsp[:flag],
 	})
 
+}
+
+// 霉变获取数据函数
+func handle4(c *gin.Context) {
+	// 1. 将获取到的数据进行校验
+	var HistGerms model.HistoryData
+	err := c.ShouldBindJSON(&HistGerms) // 数据校验--校验格式 [如果数据校验成功，数据存到RecData]
+	if err != nil {
+		log.Println("网页请求历史数据格式有误！", err)
+		c.JSON(http.StatusOK, "网页请求历史数据格式有误！")
+		return // 如果忽略return也可以，因为：用户的一次请求只能拥有一次响应
+	}
+	log.Println("网页请求霉变历史数据格式正确...")
+
+	errCode, rsp := HistoryGerms(HistGerms)
+	if errCode != model.SUCESS {
+		log.Println(errCode)
+		c.JSON(http.StatusOK, gin.H{
+			"code": errCode,
+			"msg":  "数据查找失败！",
+		})
+		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": errCode,
+			"len":  len(rsp),
+			"rsp":  rsp,
+		})
+	}
 }
 
 // 解决跨域的CROS
