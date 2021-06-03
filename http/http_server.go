@@ -1,4 +1,4 @@
-package main
+package http
 
 import (
 	"bytes"
@@ -9,6 +9,8 @@ import (
 	"io/ioutil"
 	"log"
 	"main.go/model"
+	. "main.go/mongo"
+	"main.go/token"
 	"net/http"
 	"strings"
 	"time"
@@ -37,7 +39,7 @@ func GetGermsInit() {
 	for true {
 		fmt.Println("------")
 		// 获取加密的token
-		s1, t1 := GenerateToken()
+		s1, t1 := token.GenerateToken()
 		url1 := "https://open-gate.daqiuyin.com/v1"
 		body := model.GetGerms{ // 实例化一个请求体
 			Method: "GET",
