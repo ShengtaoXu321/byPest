@@ -14,6 +14,7 @@ type InterData struct {
 	IdDev    string `json:"idDev" binding:"required"`
 	PestType int    `json:"pestType" binding:"required"`
 	Time     int64  `json:"time" binding:"required"`
+	InsTime  int64  `bson:"InsTime"`
 }
 
 // 2. 定义与网页传输数据的结构体
@@ -36,6 +37,7 @@ type ParsingGerms struct {
 	Ymd     string  `bson:"Ymd" json:"Ymd"`
 	T       int64   `bson:"T" json:"T"`
 	Dc      float64 `bson:"DC" json:"DC"`
+	Time    int64   `bson:"time" json:"Time"`
 	InsTime int64   `bson:"InsTime" json:"InsTime"`
 }
 

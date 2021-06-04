@@ -93,7 +93,11 @@ func GetGermsInit() {
 
 		// 将解析后的数据存入结构体
 		GermsMap.Germs = gemData
-		GermsMap.Ymd = ymd
+		GermsMap.Ymd = ymd + " " + "00:00:00"
+		// 时间转时间戳
+		loc, _ := time.LoadLocation("Asia/Shanghai")
+		tt, _ := time.ParseInLocation("2006-01-02 15:04:05", GermsMap.Ymd, loc) //2006-01-02 15:04:05是转换的格式如php的"Y-m-d H:i:s"
+		GermsMap.Time = tt.Unix()
 		GermsMap.T = T
 		GermsMap.Dc = DC
 		fmt.Println("拿到的数据信息")
@@ -123,7 +127,7 @@ func handle1(c *gin.Context) {
 
 		fmt.Println("接收到的数据是", recData)
 
-		//Insert(recData)
+		Insert(recData)
 		c.JSON(http.StatusOK, "访问接口成功")
 
 	}

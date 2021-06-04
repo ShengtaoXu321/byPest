@@ -38,7 +38,7 @@ func Insert(buf model.PestDate) {
 	for i := 1; i <= l; i++ {
 		var dataInDb model.InterData
 		dataInDb = data[i-1]
-		dataInDb.Time = time.Now().Unix() //改用当前时间戳代替发送数据的时间戳
+		dataInDb.InsTime = time.Now().Unix() //改用当前时间戳代替发送数据的时间戳
 		_, err := db_name.InsertOne(context.TODO(), dataInDb)
 		if err != nil {
 			log.Println("数据插入数据库失败！", err)
@@ -68,10 +68,10 @@ func History(HistData model.HistoryData) (int, []model.InterData) {
 	//res := []model.InterData{}
 
 	opts := options.Find()
-	opts.SetSort(bson.D{{"time", -1}}) // 时间戳从小到大排序，设置可选规则
-	ctx := context.Background()        // 全部表格
+	opts.SetSort(bson.D{{"InsTime", -1}}) // 时间戳从小到大排序，设置可选规则
+	ctx := context.Background()           // 全部表格
 	filter := bson.M{
-		"time": bson.M{"$gte": (HistData.StartTime) / 1000, "$lte": (HistData.EndTime) / 1000},
+		"InsTime": bson.M{"$gte": (HistData.StartTime) / 1000, "$lte": (HistData.EndTime) / 1000},
 	}
 
 	// 进行查询逻辑
@@ -106,8 +106,8 @@ func Latest() (int, []model.InterData) {
 	//res := []model.InterData{}
 
 	opts := options.Find()
-	opts.SetSort(bson.D{{"time", -1}}) // 时间戳从小到大排序，设置可选规则
-	ctx := context.Background()        // 全部表格
+	opts.SetSort(bson.D{{"InsTime", -1}}) // 时间戳从小到大排序，设置可选规则
+	ctx := context.Background()           // 全部表格
 	filter := bson.M{}
 
 	// 进行查询逻辑
@@ -142,10 +142,10 @@ func HistoryGerms(HistData model.HistoryData) (int, []model.ParsingGerms) {
 	//res := []model.InterData{}
 
 	opts := options.Find()
-	opts.SetSort(bson.D{{"InsTime", -1}}) // 时间戳从小到大排序，设置可选规则
-	ctx := context.Background()           // 全部表格
+	opts.SetSort(bson.D{{"time", -1}}) // 时间戳从小到大排序，设置可选规则
+	ctx := context.Background()        // 全部表格
 	filter := bson.M{
-		"InsTime": bson.M{"$gte": (HistData.StartTime) / 1000, "$lte": (HistData.EndTime) / 1000},
+		"time": bson.M{"$gte": (HistData.StartTime) / 1000, "$lte": (HistData.EndTime) / 1000},
 	}
 
 	// 进行查询逻辑
@@ -153,7 +153,6 @@ func HistoryGerms(HistData model.HistoryData) (int, []model.ParsingGerms) {
 		log.Println("查询霉变历史数据失败！", err)
 		return model.SEARCH_ERR, res
 	} else { // 进行数据遍历
-
 		for cur.Next(ctx) {
 			var CI model.ParsingGerms
 			err := cur.Decode(&CI)
@@ -162,7 +161,6 @@ func HistoryGerms(HistData model.HistoryData) (int, []model.ParsingGerms) {
 				return model.MARSH_ERR, res
 			}
 			res = append(res, CI)
-
 		}
 		if len(res) == 0 {
 			log.Println("查询到数据为空！")
