@@ -101,6 +101,14 @@
 #### 遇到的问题
 * windows本机运行无问题，部署时在Linux上获取不到POST请求
 * 改用go的交叉编译时，编译不成功
+* 交叉编译成功后，利用dockerfile部署的时候，报错x506：证书错误
+
+### 解决方法
+* Docker上面POST请求报错，是因为x506:证书不通过。解决方法：忽略http请求证书
+* 解决参考：https://stackoverflow.com/questions/12122159/how-to-do-a-https-request-with-bad-certificate
+* 交叉编译：windows上面一步一步执行
 
 ### 完成时间
 2021年6月3日
+
+
