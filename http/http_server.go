@@ -2,6 +2,7 @@ package http
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -63,9 +64,15 @@ func GetGermsInit() {
 		request.Header.Add("X-DAQIUYIN-SIGN", s1)
 		request.Header.Add("X-DAQIUYIN-DATE", t1)
 
+		// 解决docker部署时，出现证书错误
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+
 		// 超时
 		var client = http.Client{
-			Timeout: 20 * time.Second,
+			Timeout:   20 * time.Second,
+			Transport: tr,
 		}
 		response, err1 := client.Do(request)
 		if err1 != nil {

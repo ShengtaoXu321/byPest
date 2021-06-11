@@ -68,10 +68,10 @@ func History(HistData model.HistoryData) (int, []model.InterData) {
 	//res := []model.InterData{}
 
 	opts := options.Find()
-	opts.SetSort(bson.D{{"InsTime", -1}}) // 时间戳从小到大排序，设置可选规则
-	ctx := context.Background()           // 全部表格
+	opts.SetSort(bson.D{{"time", -1}}) // 时间戳从小到大排序，设置可选规则
+	ctx := context.Background()        // 全部表格
 	filter := bson.M{
-		"InsTime": bson.M{"$gte": (HistData.StartTime) / 1000, "$lte": (HistData.EndTime) / 1000},
+		"time": bson.M{"$gte": (HistData.StartTime) / 1000, "$lte": (HistData.EndTime) / 1000},
 	}
 
 	// 进行查询逻辑
