@@ -206,7 +206,7 @@ func handle3(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": errCode,
 		"len":  flag,
-		"rsp":  rsp[:flag],
+		"rsp":  rsp[:100],
 	})
 
 }

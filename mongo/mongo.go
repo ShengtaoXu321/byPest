@@ -106,8 +106,8 @@ func Latest() (int, []model.InterData) {
 	//res := []model.InterData{}
 
 	opts := options.Find()
-	opts.SetSort(bson.D{{"InsTime", -1}}) // 时间戳从小到大排序，设置可选规则
-	ctx := context.Background()           // 全部表格
+	opts.SetSort(bson.D{{"time", -1}}) // 时间戳从小到大排序，设置可选规则
+	ctx := context.Background()        // 全部表格
 	filter := bson.M{}
 
 	// 进行查询逻辑
