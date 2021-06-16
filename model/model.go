@@ -38,6 +38,7 @@ type ParsingGerms struct {
 	T       int64   `bson:"T" json:"T"`
 	Dc      float64 `bson:"DC" json:"DC"`
 	Time    int64   `bson:"time" json:"Time"`
+	Level   int64   `bson:"level" json:"Level"`
 	InsTime int64   `bson:"InsTime" json:"InsTime"`
 }
 

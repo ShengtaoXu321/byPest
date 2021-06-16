@@ -97,6 +97,7 @@ func GetGermsInit() {
 		ymd := gjson.Get(senData, "ymd").String()
 		T := gjson.Get(senData, "T").Int()
 		DC := gjson.Get(senData, "DC").Float()
+		Level := gjson.Get(data3, "level").Int()
 
 		// 将解析后的数据存入结构体
 		GermsMap.Germs = gemData
@@ -107,6 +108,7 @@ func GetGermsInit() {
 		GermsMap.Time = tt.Unix()
 		GermsMap.T = T
 		GermsMap.Dc = DC
+		GermsMap.Level = Level
 		fmt.Println("拿到的数据信息")
 		fmt.Println(GermsMap)
 
