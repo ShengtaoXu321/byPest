@@ -128,8 +128,21 @@ chmod xxx pest
 nohup ./pest > out.file 2>&1 &
 
 ```
+### 解决docker部署访问不到霉变数据的问题
+* 在dockerfile中加入了时间配置，安装tzdata软件包，并生成软连接
+```dockerfile
+RUN apt-get update
+RUN apt-get install -y tzdata && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+```
+* 解决代码中对ymd非标准时间转UNIX时间戳出现的问题
+* 解决docker中POST请求，出现证书不通过的问题
+
+### 存在的问题
+* 代码臃肿，复用程度不够
+* 在进行数据库的增删改查时，处理逻辑需要改进
+* 在解决docker中时区上海定位不到的问题，除了上述的解决思路，是否还有其他的解决方案
 
 ### 完成时间
-2021年6月16日
+2021年6月17日
 
 
