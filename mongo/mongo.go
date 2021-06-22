@@ -26,29 +26,29 @@ func MongoInit() {
 	}
 	fmt.Println("mongo数据库连接成功！")
 	db := client.Database("ByPest")
-	db_name = db.Collection("Pest")
+	db_name = db.Collection("pest1")
 	db_name1 = db.Collection("Germs")
 }
 
-// 硬件数据插入数据库Pest集合
-func Insert(buf model.PestDate) {
-	data := buf.Data
-	l := len(data)
-	fmt.Println(l)
-	for i := 1; i <= l; i++ {
-		var dataInDb model.InterData
-		dataInDb = data[i-1]
-		dataInDb.InsTime = time.Now().Unix() //改用当前时间戳代替发送数据的时间戳
-		_, err := db_name.InsertOne(context.TODO(), dataInDb)
-		if err != nil {
-			log.Println("数据插入数据库失败！", err)
-			continue
-		}
-		fmt.Println("数据插入成功！", dataInDb.Id)
-		continue
-
-	}
-}
+//// 硬件数据插入数据库Pest集合
+//func Insert(buf model.PestDate) {
+//	data := buf.Data
+//	l := len(data)
+//	fmt.Println(l)
+//	for i := 1; i <= l; i++ {
+//		var dataInDb model.InterData
+//		dataInDb = data[i-1]
+//		dataInDb.InsTime = time.Now().Unix() //改用当前时间戳代替发送数据的时间戳
+//		_, err := db_name.InsertOne(context.TODO(), dataInDb)
+//		if err != nil {
+//			log.Println("数据插入数据库失败！", err)
+//			continue
+//		}
+//		fmt.Println("数据插入成功！", dataInDb.Id)
+//		continue
+//
+//	}
+//}
 
 // 霉变数据插入Germs集合
 func InsertGerms(buf model.ParsingGerms) {

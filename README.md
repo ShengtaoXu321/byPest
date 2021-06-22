@@ -146,3 +146,12 @@ RUN apt-get install -y tzdata && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/l
 2021年6月17日
 
 
+## 第八版
+### 特性
+* 注释掉获取硬件数据的API，改为模拟数据生成
+* 新增一个perm1接口，该接口功能：前端发送时间段内的所有时间戳、`iddev`种类数据的上报
+
+### 完成时间
+2021年6月22日
+
+
