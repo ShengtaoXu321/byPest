@@ -6,15 +6,40 @@
 * 给硬件平台提供了上报接口
 * docker部署，端口为18088
 
+### 北邮虫害硬件上传的数据协议参考
+```json
+{
+  "data": [
+    {
+      "devType": 0,
+      "id": 1061,
+      "idDev": "030A",
+      "pestType": 0,
+      "time": "1618722050"
+    }
+  ],
+  "total_nums": 100
+}
+```
+### 补充说明
+* 第一版部署在82的服务器上，部署方式为docker；详见dockerfile文件
+* 代码中对硬件上传的数据会有一个校验的过程，必须符合model中结构体`PestDate`定义
+* 利用gin框架，生成一个HTTP服务端，监听18088端口
+
 ### 完成时间
 2021年4月1号
 
 ## 第二版本
 ### 特性
-* 完成数据解析，设置筛选规则
+* 完成对虫害数据的解析，设置筛选规则
 * 给硬件平台提供了上报接口
 * 数据解析后存入数据库
 * 给网页前端提供查询历史数据和最新数据的接口
+
+### 补充说明
+* 利用gin框架，生成两个路由：历史数据`/history`和`/latest`，请求方式为POST方式
+* 虫害数据插入的是82服务器上的`ByPest`下的`Pest`集合，数据库类型为mongodb。
+* 数据库的：`Insert`、`Find`为本次的主要操作。注意mongodb这类NOSQL和MySQL的区别
 
 ### 完成时间
 2021年5月21号
@@ -61,8 +86,10 @@
   * CORS两种请求
     
    **简单请求(simple request)**和**非简单请求(not-so-simple request)**
-  
-  
+
+### 补充说明
+* 跨域的解决除了添加`Cros`函数，gin框架有单独的模块支持忽略操作；为：`r.Use(cros.Default())` 。需要导入模块：`github.com/gin-contrib/cros`
+* 或者在nginx部署的时候，解决跨域问题。推荐这种方式
 
 ### 完成时间
 2021年5月25日
@@ -72,6 +99,53 @@
 ### 特性
 * 新增霉变数据的获取功能
 * 引入了加密`token`的生成（代码为照搬）
+
+### 霉变数据协议参考
+```json
+{
+    "code": 100,
+    "message": "done",
+    "data": {
+        "owner": "5f45d17204da596300000003",
+        "desc": "霉菌计算模块",
+        "c_ts": "2021-05-26T14:24:13.612Z",
+        "algorithm": {
+            "name": "LogisticEquation",
+            "crop": "水稻",
+            "s_ts": "2021-05-25T00:00:00.000Z",
+            "sensor": {
+                "T": "701403c54d84:762c27941f6f:AT_1",
+                "DC": "701403c54d84:762c27941f6f:AH_1"
+            },
+            "calculated": {
+                "u_ts": "2021-05-26T16:00:00.000Z",
+                "days": 1,
+                "germs": 76666,
+                "level": 1
+            },
+            "sensor_data": {
+                "ymd": "2021-05-26",
+                "T": 17,
+                "DC": 76.8
+            }
+        },
+        "calculator_id": "60ae5a0dffaf33c74592d6c8",
+        "u_id": "5f45d17204da596300000003"
+    }
+}
+```
+### 补充说明
+* 获取霉变数据的时候，是我们请求第三方：DAQIUYIN提供的接口。请求方式为POST，API为：`https://open-gate.daqiuyin.com/v1`
+* 请求Headers为:代码http_server中的部分，这里可以看作一个http客户端请求。
+* 请求体部分
+```json
+{
+  "Method": "GET",
+  "Path":   "/sc-v2/calculator/60ae5a0dffaf33c74592d6c8",
+  "Data":   {}
+}
+```
+* 请求Headers中的`X-DAQIUYIN-SIGN`为加密得到，具体加密方式在generateToken文件中，该文件为晨哥编写。特此感谢！
 
 ### 遇到的问题
 * 生成`token`的时候，一直进行`token`不匹配报错。最终发现为unix时间生成的int64直接转换成string不对
